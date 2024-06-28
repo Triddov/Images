@@ -102,7 +102,7 @@ def handle_image():
 
 def log_status(status, message):
     with open('logs.txt', 'a') as log_file:
-        log_file.write(f"{datetime.now().strftime('%d, %m, %y, %H:%M:%S')} - {status}, {message}\n")
+        log_file.write(f"{datetime.now().strftime('date:%m/%d/%y time:%H:%M:%S')} - code:{status} | message:{message}\n")
 
 
 if __name__ == "__main__":

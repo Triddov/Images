@@ -7,7 +7,7 @@
 
 
    ```
-   git clone https://github.com/yourusername/image-upload-service.git
+   git clone https://github.com/Triddov/Images.git
    
    pip install -r requirements.txt
    ```
