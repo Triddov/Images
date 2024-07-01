@@ -32,7 +32,7 @@ document.getElementById('sel-img').addEventListener('click', function() {
 document.getElementById('send-file').addEventListener('click', async function() {
     const imageElementSrc = document.getElementById('image').src;
     const imgTitle = document.getElementById('img-title').value;
-    const imgDescription = document.getElementById('img-discription').value;
+    const imgDescription = document.getElementById('img-description').value;
     const imgTags = document.getElementById('img-tags').value;
     const imgExtension = document.getElementById('img-extension-info').textContent;
     const imgSize = document.getElementById('img-size-info').textContent;
@@ -87,7 +87,7 @@ function chunkString(str, size) {
 
 async function sendChunks(chunks) {
     const totalChunks = chunks.length;
-    const chanksCountElement = document.getElementById('chank-count');
+    const chunksCountElement = document.getElementById('chunk-count');
 
     document.getElementById('response-status').textContent = "Ожидание";
     document.getElementById('response-message').textContent = "Ожидание";
@@ -100,9 +100,9 @@ async function sendChunks(chunks) {
             chunk: chunk
         };
 
-        chanksCountElement.textContent = payload.id + '/' + payload.total;
+        chunksCountElement.textContent = payload.id + '/' + payload.total;
 
-        const response = await fetch('/image', {
+        const response = await fetch('/image-chunks', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

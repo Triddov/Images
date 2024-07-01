@@ -1,28 +1,14 @@
 from flask import Flask, request, jsonify, render_template
-import psycopg2
-import base64
-import os
+from datetime import datetime
 from PIL import Image
 from io import BytesIO
-from datetime import datetime
+from database import Database
+import base64
+import os
 
 app = Flask(__name__)
 
-DB_HOST = 'localhost'
-DB_NAME = 'Images'
-DB_USER = 'postgres'
-DB_PASS = 'qwerty09876'
-DB_PORT = '5432'
-
-pg = psycopg2.connect(f"""
-    host={DB_HOST}
-    dbname={DB_NAME} 
-    user={DB_USER}
-    password={DB_PASS}
-    port={DB_PORT}
-""")
-
-ImageLimit = 1024 # KB
+ImageLimit = 1024  # KB
 
 app.config['UPLOAD_FOLDER'] = 'gallery'
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -50,8 +36,8 @@ def handle_image():
             "status": "422",
             "message": "Empty image title"
         }
-        log_status("422", "Empty image title")
-        return jsonify(response), 422 #семантически неправльный запрос
+        log_status("422", "Empty image title", title)
+        return jsonify(response), 422  # семантически неправильный запрос
 
     try:
         header, image_data = image_data.split(",", 1)
@@ -62,25 +48,22 @@ def handle_image():
                 "status": "413",
                 "message": f"The file size is limited to {ImageLimit/1024} MB"
             }
-            log_status("413", f"The file size is limited to {ImageLimit/1024} MB")
-            return jsonify(response), 413 #слишком большой объем данных
+            log_status("413", f"The file size is limited to {ImageLimit/1024} MB", title)
+            return jsonify(response), 413  # слишком большой объем данных
 
-        # Check if it's a valid image
+        # Проверка валидности файла
         image = Image.open(BytesIO(image))
-        image.verify()  # Verify that it is, in fact, an image
+        image.verify()  # Фактическая проверка
 
         # Сохранение изображения
-        filename = f"{data['title']}.{data['extension']}"
+        filename = f"{title}.{extension}"
         image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         image = Image.open(BytesIO(base64.b64decode(image_data)))
         image.save(image_path)
 
-        cursor = pg.cursor()
-        cursor.execute('''
-                    INSERT INTO images (title, path, size, description, tags, extension)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                ''', (title, image_path, image_size, description, tags, extension))
-        pg.commit()
+        db = Database()
+        db.insert_image(title, image_path, image_size, description, tags, extension)
+        db.close()
 
         response = {
             "status": "200",
@@ -88,21 +71,28 @@ def handle_image():
             "path": image_path
         }
 
-        log_status("200", "Image uploaded successfully!")
-        return jsonify(response), 200 #успешно
+        log_status("200", "Image uploaded successfully!", title)
+        return jsonify(response), 200  # успешно
 
     except (IOError, SyntaxError):
         response = {
             "status": "415",
             "message": "The file is not a valid image"
         }
-        log_status("415", "The file is not a valid image")
-        return jsonify(response), 415 #неподдерживаемый формат
+        log_status("415", "The file is not a valid image", title)
+        return jsonify(response), 415  # неподдерживаемый формат
 
 
-def log_status(status, message):
-    with open('logs.txt', 'a') as log_file:
-        log_file.write(f"{datetime.now().strftime('date:%m/%d/%y time:%H:%M:%S')} - code:{status} | message:{message}\n")
+@app.route("/image-chunks")
+def load_chunks():
+    chunks = request.get_json()
+    return jsonify(chunks)
+
+
+def log_status(status, message, title):
+    with open('../logs.txt', 'a') as log_file:
+        log_file.write(f"{datetime.now().strftime('date:%m/%d/%y time:%H:%M:%S')}"
+                       f" - code:{status} | message: {message} | file name: '{title}'\n")
 
 
 if __name__ == "__main__":

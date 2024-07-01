@@ -2,7 +2,7 @@ body{
     margin: 0;
 }
 
-#root, .image-discript-block, .img-load-block{
+#root, .image-descript-block, .img-load-block{
     display: flex;
     flex-direction: column;
 }
@@ -35,7 +35,7 @@ body{
     width: 150px
 }
 
-.server-response-block, .image-discript-block > span{
+.server-response-block, .image-descript-block > span{
     margin-top: 20px;
 }
 
