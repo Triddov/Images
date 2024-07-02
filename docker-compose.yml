@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_HOST: ${DB_HOST}
+    volumes:
+      - .:/server
+    ports:
+      - "5000:5000"
+    env_file:
+      - server/.env

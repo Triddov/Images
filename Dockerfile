@@ -10,7 +10,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем все файлы и директории из директории server внутрь контейнера
 COPY server/ .
-COPY .env .
 
 # Настройка PYTHONPATH
 ENV PYTHONPATH=/app/server

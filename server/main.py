@@ -8,6 +8,9 @@ import os
 
 app = Flask(__name__)
 
+# Хранилище для временного хранения чанков
+chunks_storage = {}
+
 ImageLimit = 1024  # KB
 
 app.config['UPLOAD_FOLDER'] = 'gallery'
@@ -83,14 +86,8 @@ def handle_image():
         return jsonify(response), 415  # неподдерживаемый формат
 
 
-@app.route("/image-chunks")
-def load_chunks():
-    chunks = request.get_json()
-    return jsonify(chunks)
-
-
 def log_status(status, message, title):
-    with open('../logs.txt', 'a') as log_file:
+    with open('logs.txt', 'a') as log_file:
         log_file.write(f"{datetime.now().strftime('date:%m/%d/%y time:%H:%M:%S')}"
                        f" - code:{status} | message: {message} | file name: '{title}'\n")
 

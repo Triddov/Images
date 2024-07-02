@@ -1,0 +1,8 @@
+date:07/01/24 time:12:18:54 - code:200 | message: Image uploaded successfully! | file name: '123'
+date:07/01/24 time:12:36:27 - code:200 | message: Image uploaded successfully! | file name: '2134'
+date:07/01/24 time:14:22:43 - code:200 | message: Image uploaded successfully! | file name: '123'
+date:07/01/24 time:19:55:56 - code:413 | message: The file size is limited to 1.0 MB | file name: '123123'
+date:07/01/24 time:19:56:34 - code:200 | message: Image uploaded successfully! | file name: 'денис'
+date:07/01/24 time:19:57:37 - code:415 | message: The file is not a valid image | file name: 'денис'
+date:07/01/24 time:19:57:37 - code:415 | message: The file is not a valid image | file name: 'денис'
+date:07/01/24 time:22:25:15 - code:200 | message: Image uploaded successfully! | file name: 'чанки тест'
