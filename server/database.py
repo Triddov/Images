@@ -2,8 +2,7 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 
-# Загрузка переменных окружения из файла .env
-load_dotenv()
+load_dotenv()  # Загрузка переменных окружения из .env файла
 
 
 class Database:
@@ -31,6 +30,6 @@ class Database:
 
         self.connection.commit()
 
-    def close(self):
+    def close(self):  # to do
         self.cursor.close()
         self.connection.close()

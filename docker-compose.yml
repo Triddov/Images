@@ -10,7 +10,11 @@ services:
       POSTGRES_HOST: ${DB_HOST}
     volumes:
       - .:/server
+      - gallery_volume:/app/gallery
     ports:
       - "5000:5000"
     env_file:
-      - server/.env
+      - .env
+volumes:
+  gallery_volume:
+

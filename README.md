@@ -13,7 +13,7 @@
    ```
    git clone https://github.com/Triddov/Images.git
    
-   docker-compose up --build
+   docker-compose up --build -d
    ```
 
 Для того, чтобы запустить приложение локально без использования Docker,

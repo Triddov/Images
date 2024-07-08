@@ -2,18 +2,22 @@ from flask import Flask, request, jsonify, render_template
 from datetime import datetime
 from PIL import Image
 from io import BytesIO
+from dotenv import load_dotenv
 from database import Database
 import base64
 import os
 
+load_dotenv()  # Загрузка переменных из .env файла
+
+
 app = Flask(__name__)
 
-# Хранилище для временного хранения чанков
-chunks_storage = {}
+chunks_storage = {}  # Временное хранилище чанков изображения
 
-ImageLimit = 1024  # KB
+ImageLimit = int(os.getenv('ImageLimit')) 
 
 app.config['UPLOAD_FOLDER'] = 'gallery'
+
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -24,7 +28,7 @@ def start():
 
 
 @app.route("/image", methods=["POST"])
-def handle_image():
+def process_image():
     data = request.get_json()
 
     image_data = data['base64']
@@ -84,6 +88,31 @@ def handle_image():
         }
         log_status("415", "The file is not a valid image", title)
         return jsonify(response), 415  # неподдерживаемый формат
+
+
+@app.route("/image-chunks", methods=["POST"])
+def handle_chunks():
+    data = request.get_json()
+
+    chunk_id = data['id']
+    total_chunks = data['total']
+    chunk_data = data['chunk']
+
+    title = data['title']
+
+    if title not in chunks_storage:
+        chunks_storage[title] = [''] * total_chunks
+
+    chunks_storage[title][chunk_id - 1] = chunk_data
+
+    if all(chunk != '' for chunk in chunks_storage[title]):
+        full_image_data = ''.join(chunks_storage[title])
+        del chunks_storage[title]
+
+        data['base64'] = full_image_data
+        return process_image(data)
+
+    return jsonify({"message": f"{chunk_id}/{total_chunks} received"}), 200  # успешно
 
 
 def log_status(status, message, title):
