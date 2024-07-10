@@ -30,6 +30,6 @@ class Database:
 
         self.connection.commit()
 
-    def close(self):  # to do
+    def close(self):
         self.cursor.close()
         self.connection.close()
