@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 chunks_storage = {}  # Временное хранилище чанков изображения
 
-ImageLimit = int(os.getenv('ImageLimit')) 
+ImageLimit = int(os.getenv('IMAGE_LIMIT')) 
 
 app.config['UPLOAD_FOLDER'] = 'gallery'
 
